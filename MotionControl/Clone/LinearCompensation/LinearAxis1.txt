@@ -1,0 +1,22 @@
+     1;	   -20000;		-20000;//for test space key //min. value
+2;       -10000;	            -9987;//for test space key
+         3;		0;                       25;//for test space key
+4;10000;10040;//for test space key
+        5;            20000;               20056;//for test space key
+6;         30000;               30073;//for test space key
+7;           40000;                 40089;//for test space key
+8;       50000;           50106;//for test space key
+9;60000;            60123;//for test space key
+10;70000;          70139;//for test space key
+11;                    80000;80158;//for test space key
+12;90000;           90175;//for test space key
+13;100000;          100189;//for test space key
+14;110000;        110204;//for test space key
+15;            120000;120217;//for test space key
+16;            130000;130231;//for test space key
+17;            140000;140245;//for test space key
+18;          150000;150259;//for test space key
+19;160000;         160271;//for test space key
+20;            170000;              170282;//for test space key
+21;           180000;           180293;//for test space key
+22;        		1000000;		1000000;	//for test space key //max.value

@@ -1,0 +1,90 @@
+/***************************************************************************/
+/*  Function name: DSPCodePacket_Code_G106()                                   */
+/*  Argument:NO     	                                    */
+/*  Return value:true/
+/*  Function: DSPCodePacket_Code_G106                                           */
+/*    Please refer to the following document for more detials.        */                                   
+/*								*/
+/*  G106 code   (LED votage control)         */
+/*	Packeting G106 code ,PC -> DSP		*/
+/***************************************************************************/
+Uint16 DSPCodePacket_Code_G106(DACONVERT  Wave_Para)
+{		
+	//Main_CMD = 0x6a  LED output votage control...
+	//Sub_CMD1 select LED channel
+	//Sub_CMD1 = 0x02 LED flash light
+	//Sub_CMD1 = 0x03 LED 2 
+	//Sub_CMD1 = 0x04 LED 3 	
+
+	//Sub_CMD2 votage out value(0.01)Max.=500.
+	//Sub_CMD2 = 500 (5.0V)
+	//Sub_CMD2 = 234 (2.34V)
+	
+	//************************
+	Uint32 si;			
+	GCODE  *GCodeSIPointer;
+	
+	OverallSign_Clone.NeedSendCount++;
+	si = (OverallSign_Clone.NeedSendCount-1) % STDGCODE_MOD;
+	GCodeSIPointer = &GCodeBuffer[si];	
+	
+	GCodeSIPointer->Main_CMD = 106;//0x6a
+
+	GCodeSIPointer->Sub_CMD1 = 0;//set to 
+	GCodeSIPointer->Sub_CMD1 = Wave_Para.VotageChannel;
+	//Sub_CMD1 = 0x02 LED flash light
+	//GCodeSIPointer->Sub_CMD1 = 2;
+	
+	//Sub_CMD1 = 0x03 LED 2 
+	//GCodeSIPointer->Sub_CMD1 = 3;
+
+	//Sub_CMD1 = 0x04 LED 3 	
+	//GCodeSIPointer->Sub_CMD1 = 4;
+
+
+	//Sub_CMD2 votage out value(0.01)Max.=500.
+	//Sub_CMD2 = 500 (5.0V)
+	//Sub_CMD2 = 234 (2.34V)	
+	//GCodeSIPointer->Sub_CMD2 = 345;//for test
+	GCodeSIPointer->Sub_CMD2 = Wave_Para.VotageValue;
+
+	DSPCodePacket_Code_Feedrate(GCodeSIPointer,0);
+	GCodeSIPointer->SendCount = OverallSign_Clone.NeedSendCount;
+
+	if(GCodeSIPointer->SendCount == 1)
+	{
+		DSPCodePacket_Code_StartPoint(GCodeSIPointer);
+	}
+	else
+	{
+		GCodeSIPointer->StartPoint = GCodeBuffer[si-1].EndPoint;
+	}	
+
+	GCodeSIPointer->EndPoint = GCodeSIPointer->StartPoint;
+
+	#if 0
+	GCodeSIPointer->EndPoint.Axis1_Clone_Linear_Z = AutoSign;
+	GCodeSIPointer->EndPoint.Axis2_Clone_Linear_A = Voltage_Max;
+	GCodeSIPointer->EndPoint.Axis3_Clone_Optical_LensTrans = Voltage_Start;
+	GCodeSIPointer->EndPoint.Axis4_Clone_Optical_FilterTrans = CycleNum;
+	GCodeSIPointer->EndPoint.Axis5 = m_StepValue;
+	
+	GCodeSIPointer->EndPoint.Axis6_PlateEmpty_Destination_Z1_R = PWM_HighCount;
+	GCodeSIPointer->EndPoint.Axis7_PlateEmpty_Destination_Y = PWM_LowCount;
+	GCodeSIPointer->EndPoint.Axis8_PlateEmpty_Destination_X = PWM_Phase;
+	#endif
+	GCodeSIPointer->EndPoint.Axis1_Clone_Linear_Z = Wave_Para.AutoSign;
+	GCodeSIPointer->EndPoint.Axis2_Clone_Linear_A = Wave_Para.Voltage_Max;
+	GCodeSIPointer->EndPoint.Axis3_Clone_Optical_LensTrans = Wave_Para.Voltage_Start;
+	GCodeSIPointer->EndPoint.Axis4_Clone_Optical_FilterTrans = Wave_Para.CycleNum;
+	GCodeSIPointer->EndPoint.Axis5 = 0;
+	GCodeSIPointer->EndPoint.Axis6_PlateEmpty_Destination_Z1_R = Wave_Para.PWMHighCount;
+	GCodeSIPointer->EndPoint.Axis7_PlateEmpty_Destination_Y = Wave_Para.PWMLowCount;
+	GCodeSIPointer->EndPoint.Axis8_PlateEmpty_Destination_X = Wave_Para.PWMPhase;
+	GCodeSIPointer->EndPoint.Axis9_Plate_Transfer_Z = Wave_Para.RiseTime;
+	GCodeSIPointer->EndPoint.Axis10_Plate_Transfer_A = Wave_Para.FallTime;
+	GCodeSIPointer->EndPoint.Axis11_PlateWaste_Source_X = Wave_Para.HighKeepTime;
+	GCodeSIPointer->EndPoint.Axis12_PlateWaste_Source_Y = Wave_Para.LowKeepTime;
+
+	return 1;
+}
